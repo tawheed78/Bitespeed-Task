@@ -9,5 +9,5 @@ class Contact(models.Model):
     updatedAt = models.DateTimeField(auto_now = True)
     deletedAt = models.DateTimeField(null=True, blank=True)
 
-def __str__(self):
-    return self.email or self.phoneNumber
+    def __str__(self):
+        return self.email or self.phoneNumber
