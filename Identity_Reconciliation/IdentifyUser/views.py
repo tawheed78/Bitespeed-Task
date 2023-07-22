@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import json
 from .models import Contact
 
-def identifyUser(request):
+def identify_user(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         email = data.get('email')
