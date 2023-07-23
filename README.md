@@ -1,6 +1,6 @@
 Bitespeed Backend Task: Identity Reconciliation
 
-Usage:
+Path:
 The Backend service has been hosted on "https://identityreconciliation.pythonanywhere.com/identify/"
 
 Steps:
