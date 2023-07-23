@@ -14,3 +14,7 @@ Steps:
 	"email": "mcfly@hillvalley.edu",
 	"phoneNumber": "123456"
    }
+
+The resume has been added to the repository. The links in the resume wont work through Github, it has to be downloaded.
+
+Thankyou !!!
