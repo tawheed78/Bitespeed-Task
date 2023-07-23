@@ -40,6 +40,42 @@ def identify_user(request):
             }
             return JsonResponse(response_data, status=200)
 
+
+        #If the response consists of data from two different contacts
+        elif len(primary_contact_email)!=0 and len(primary_contact_phone)!=0:
+            #Getting combined data with both contacts and sorting them old to new to get the oldest one and set the linkPrecedence as Primary.
+            available_contact = list(set(primary_contact_phone+primary_contact_email))
+            available_contact.sort(key=lambda x: x.createdAt)
+            available_contact_old = available_contact[0]
+            available_contact_old.linkPrecedence = 'primary'
+            available_contact_old.save()
+
+            #Appending oldest email and phone first 
+            emailList = [available_contact_old.email]
+            phoneList = [available_contact_old.phoneNumber]
+            secondary_contacts = []
+
+            #Setting linkPrecedence as secondary for the remaining contacts and appending them to List if they are not present
+            for i in range(1, len(available_contact)):
+                available_contact[i].linkPrecedence = 'secondary'
+                available_contact[i].save()
+
+                if not available_contact[i].email in emailList:
+                    emailList.append(available_contact[i].email)
+                if not available_contact[i].phoneNumber in phoneList:
+                    phoneList.append(available_contact[i].phoneNumber)
+                secondary_contacts.append(available_contact[i].id)    
+            
+            response_data = {
+            "contact": {
+                "primaryContactId": available_contact_old.id,
+                "emails": emailList,
+                "phoneNumber": phoneList,
+                "secondaryContactIds": secondary_contacts,
+                }
+            }
+            return JsonResponse(response_data, status=200)
+
         else:
             #Getting combined data with similar contacts and sorting them old to new to get the oldest one and set the linkPrecedence as Primary.
             primary_contact_combined = list(set(primary_contact_phone+primary_contact_email))
@@ -58,9 +94,9 @@ def identify_user(request):
             for i in range(1, len(primary_contact_combined)):
                 secondary_contact = primary_contact_combined[i]
                 secondary_contact.linkPrecedence = 'secondary'
-                secondary_contact.linkedId = primary_contact_old
+                secondary_contact.linkedId = primary_contact_old.pk
                 secondary_contact.save()
-                
+
                 #If the primary contact email does not exist only then we append it to avoid email duplicates and same for phone number.
                 if len(primary_contact_email)==0:
                     emailList.append(secondary_contact.email)
@@ -69,7 +105,7 @@ def identify_user(request):
                 secondary_contacts.append(secondary_contact.id)
             
             #Creating the secondary contact
-            new_contact = Contact.objects.create(email=email, phoneNumber=phoneNumber, linkPrecedence='secondary', linkedId=primary_contact_old)
+            new_contact = Contact.objects.create(email=email, phoneNumber=phoneNumber, linkPrecedence='secondary', linkedId=primary_contact_old.pk)
             
             if len(primary_contact_email)==0:
                 emailList.append(new_contact.email)
