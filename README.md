@@ -11,6 +11,6 @@ Steps:
 5) Select Body => raw => Text = JSON
 6) In the below textbox send the JSON eresponse in the format:
      {
-        "email": "jas@gas.com",
-        "phoneNumber": "1945"
-      }
+	"email": "mcfly@hillvalley.edu",
+	"phoneNumber": "123456"
+   }
